@@ -29,6 +29,11 @@ app.use(session({
 
 app.use(flash())
 
+app.use(require('express-formidable')({
+  uploadDir: path.join(__dirname, 'public/img'),
+  keepExtensions: true
+}))
+
 app.locals.blog = {
   title: pkg.name,
   description: pkg.description
