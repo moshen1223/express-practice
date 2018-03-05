@@ -3,21 +3,6 @@ const Post = require('../lib/mongo').Post
 
 const CommentModel = require('./comments')
 
-Post.plugin('contentToHtml', {
-  afterFind: function (posts) {
-    return posts.map(function (post) {
-      post.content = marked(post.content)
-      return post
-    })
-  },
-  afterFindOne: function (post) {
-    if (post) {
-      post.content = marked(post.content)
-    }
-    return post
-  }
-})
-
 Post.plugin('addCommentsCount', {
   afterFind: function (posts) {
     return Promise.all(posts.map(function (post) {
@@ -38,6 +23,21 @@ Post.plugin('addCommentsCount', {
   }
 })
 
+Post.plugin('contentToHtml', {
+  afterFind: function (posts) {
+    return posts.map(function (post) {
+      post.content = marked(post.content)
+      return post
+    })
+  },
+  afterFindOne: function (post) {
+    if (post) {
+      post.content = marked(post.content)
+    }
+    return post
+  }
+})
+
 module.exports = {
   // 创建一篇文章
   create: function create (post) {
@@ -50,9 +50,9 @@ module.exports = {
       .findOne({ _id: postId })
       .populate({ path: 'author', model: 'User' })
       .addCreatedAt()
+      .addCommentsCount()
       .contentToHtml()
       .exec()
-      .addCommentsCount()
   },
 
   // 按创建时间降序获取所有用户文章或者某个特定用户的所有文章
@@ -66,9 +66,9 @@ module.exports = {
       .populate({ path: 'author', model: 'User' })
       .sort({ _id: -1 })
       .addCreatedAt()
+      .addCommentsCount()
       .contentToHtml()
       .exec()
-      .addCommentsCount()
   },
 
   // 通过文章 id 给 pv 加 1
