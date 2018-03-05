@@ -75,11 +75,15 @@ app.use(expressWinston.errorLogger({
 }))
 
 app.use(function (err, req, res, next) {
-  console.error(err)
   req.flash('error', err.message)
   res.redirect('/posts')
 })
 
-app.listen(config.port, ()=>{
-  console.log(`${pkg.name} listening on port ${config.port}`)
-})
+if(module.parent){
+  module.exports = app
+}else{
+  app.listen(config.port, ()=>{
+    console.log(`${pkg.name} listening on port ${config.port}`)
+  })
+}
+
