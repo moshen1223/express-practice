@@ -40,7 +40,7 @@ Post.plugin('contentToHtml', {
 
 module.exports = {
   // 创建一篇文章
-  create: function create (post) {
+  create(post) {
     return Post.create(post).exec()
   },
 

@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const checkLogin = require('../middlewares/check').checkLogin
+
 const PostModel = require('../models/posts')
 
 const CommentModel = require('../models/comments')
@@ -17,7 +18,7 @@ router.get('/', (req,res,next)=>{
     })
     .catch(next)
 })
-
+// 发表一篇文章
 router.post('/create', checkLogin, (req,res,next)=>{
   const author = req.session.user._id
   const title = req.fields.title
@@ -43,7 +44,7 @@ router.post('/create', checkLogin, (req,res,next)=>{
   }
 
   PostModel.create(post)
-    .then(function (result) {
+    .then((result) => {
       post = result.ops[0]
       req.flash('success', '发表成功')
       res.redirect(`/posts/${post._id}`)

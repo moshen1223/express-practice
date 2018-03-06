@@ -7,11 +7,11 @@ const router = express.Router()
 
 const UserModel= require('../models/users')
 const checkNotLogin = require('../middlewares/check').checkNotLogin
-
+// 注册页
 router.get('/', checkNotLogin, (req,res,next)=>{
   res.render('signup')
 })
-
+// 用户注册
 router.post('/', checkNotLogin, (req,res,next)=>{
   const name = req.fields.name
   const gender = req.fields.gender
@@ -40,11 +40,12 @@ router.post('/', checkNotLogin, (req,res,next)=>{
       throw new Error('两次输入密码不一致')
     }
   }catch(e){
+    // 注册失败，异步删除上传的头像
     fs.unlink(req.files.avatar.path)
     req.flash('error', e.message)
     return res.redirect('/signup')
   }
-
+  // 明文密码加密
   password = sha1(password)
 
   let user = {
@@ -54,14 +55,16 @@ router.post('/', checkNotLogin, (req,res,next)=>{
     bio: bio,
     avatar: avatar
   }
-
+  // 用户信息写入数据库
   UserModel.create(user).then((result)=>{
+    // 插入MongoDB后的值，包含_id
     user = result.ops[0]
     delete user.password
     req.session.user = user
     req.flash('success', '注册成功')
     res.redirect('/posts')
   }).catch((e)=>{
+    // 注册失败删除上传的头像
     fs.unlink(req.files.avatar.path)
     if(e.message.match('duplicate key')){
       req.flash('error', '用户名已被占用')
