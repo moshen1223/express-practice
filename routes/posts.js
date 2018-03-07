@@ -11,7 +11,7 @@ router.get('/', (req,res,next)=>{
   const author = req.query.author
 
   PostModel.getPosts(author)
-    .then(function (posts) {
+    .then( (posts) => {
       res.render('posts', {
         posts: posts
       })
@@ -64,7 +64,7 @@ router.get('/:postId', (req,res,next)=>{
     CommentModel.getComments(postId), // 获取该文章所有留言
     PostModel.incPv(postId)// pv 加 1
   ])
-    .then(function (result) {
+    .then((result) => {
       const post = result[0]
       const comments = result[1]
       if (!post) {
@@ -85,7 +85,7 @@ router.get('/:postId/edit', checkLogin, function (req, res, next) {
   const author = req.session.user._id
 
   PostModel.getRawPostById(postId)
-    .then(function (post) {
+    .then((post) => {
       if (!post) {
         throw new Error('该文章不存在')
       }
@@ -100,7 +100,7 @@ router.get('/:postId/edit', checkLogin, function (req, res, next) {
 })
 
 // POST /posts/:postId/edit 更新一篇文章
-router.post('/:postId/edit', checkLogin, function (req, res, next) {
+router.post('/:postId/edit', checkLogin, (req, res, next) => {
   const postId = req.params.postId
   const author = req.session.user._id
   const title = req.fields.title
@@ -120,7 +120,7 @@ router.post('/:postId/edit', checkLogin, function (req, res, next) {
   }
 
   PostModel.getRawPostById(postId)
-    .then(function (post) {
+    .then((post) => {
       if (!post) {
         throw new Error('文章不存在')
       }
@@ -128,7 +128,7 @@ router.post('/:postId/edit', checkLogin, function (req, res, next) {
         throw new Error('没有权限')
       }
       PostModel.updatePostById(postId, { title: title, content: content })
-        .then(function () {
+        .then(() => {
           req.flash('success', '编辑文章成功')
           // 编辑成功后跳转到上一页
           res.redirect(`/posts/${postId}`)

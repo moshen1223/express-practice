@@ -3,6 +3,7 @@ const Post = require('../lib/mongo').Post
 
 const CommentModel = require('./comments')
 
+// 给 post 添加留言数 commentsCount
 Post.plugin('addCommentsCount', {
   afterFind: function (posts) {
     return Promise.all(posts.map(function (post) {
@@ -23,6 +24,7 @@ Post.plugin('addCommentsCount', {
   }
 })
 
+// 将post的content从Markdown转换成HTML
 Post.plugin('contentToHtml', {
   afterFind: function (posts) {
     return posts.map(function (post) {
@@ -45,7 +47,7 @@ module.exports = {
   },
 
   // 通过文章 id 获取一篇文章
-  getPostById: function getPostById (postId) {
+  getPostById (postId) {
     return Post
       .findOne({ _id: postId })
       .populate({ path: 'author', model: 'User' })
@@ -56,7 +58,7 @@ module.exports = {
   },
 
   // 按创建时间降序获取所有用户文章或者某个特定用户的所有文章
-  getPosts: function getPosts (author) {
+  getPosts (author) {
     const query = {}
     if (author) {
       query.author = author
@@ -72,13 +74,13 @@ module.exports = {
   },
 
   // 通过文章 id 给 pv 加 1
-  incPv: function incPv (postId) {
+  incPv (postId) {
     return Post
       .update({ _id: postId }, { $inc: { pv: 1 } })
       .exec()
   },
   // 通过文章 id 获取一篇原生文章（编辑文章）
-  getRawPostById: function getRawPostById (postId) {
+  getRawPostById (postId) {
     return Post
       .findOne({ _id: postId })
       .populate({ path: 'author', model: 'User' })
@@ -86,15 +88,15 @@ module.exports = {
   },
 
   // 通过文章 id 更新一篇文章
-  updatePostById: function updatePostById (postId, data) {
+  updatePostById (postId, data) {
     return Post.update({ _id: postId }, { $set: data }).exec()
   },
 
   // 通过文章 id 删除一篇文章
-  delPostById: function delPostById (postId, author) {
+  delPostById (postId, author) {
     return Post.deleteOne({ author: author, _id: postId })
       .exec()
-      .then(function (res) {
+      .then((res) => {
         // 文章删除后，再删除该文章下的所有留言
         if (res.result.ok && res.result.n > 0) {
           return CommentModel.delCommentsByPostId(postId)

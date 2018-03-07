@@ -7,6 +7,7 @@ const config = require('config-lite')(__dirname)
 const routes = require('./routes')
 const pkg = require('./package')
 
+// 记录日志文件用的中间件
 const winston = require('winston')
 const expressWinston = require('express-winston')
 
@@ -57,7 +58,7 @@ app.use(function (req, res, next){
   res.locals.error = req.flash('error').toString()
   next()
 })
-
+// 正常请求的日志
 app.use(expressWinston.logger({
   transports: [
     new (winston.transports.Console)({
@@ -71,7 +72,7 @@ app.use(expressWinston.logger({
 }))
 // 路由
 routes(app)
-
+// 错误请求的日志
 app.use(expressWinston.errorLogger({
   transports: [
     new winston.transports.Console({
@@ -83,8 +84,8 @@ app.use(expressWinston.errorLogger({
     })
   ]
 }))
-
-app.use(function (err, req, res, next) {
+// 错误处理
+app.use((err, req, res, next) => {
   req.flash('error', err.message)
   res.redirect('/posts')
 })
