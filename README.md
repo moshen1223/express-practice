@@ -5,6 +5,8 @@ express+nodejs+mongo
 
   config: 项目配置文件<br/>
     default.js    
+  lib: 数据模型文件
+    mongo.js        
   middlewares: 存放中间件<br/>
     check.js 
   models: 存放操作数据库的文件<br/>

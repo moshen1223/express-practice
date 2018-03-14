@@ -41,6 +41,7 @@ app.use(flash())
  * 处理表单及文件上传的中间件
  * keepExtensions 是否保留后缀
  * uploadDir 上传文件目录
+ * 表单普通字段挂载到reg.fields上，文件挂载到req.files上
  */
 app.use(require('express-formidable')({
   uploadDir: path.join(__dirname, 'public/img'),
@@ -98,4 +99,3 @@ if(module.parent){
     console.log(`${pkg.name} listening on port ${config.port}`)
   })
 }
-
